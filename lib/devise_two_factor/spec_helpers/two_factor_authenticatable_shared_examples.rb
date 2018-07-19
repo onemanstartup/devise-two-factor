@@ -32,12 +32,8 @@ RSpec.shared_examples 'two_factor_authenticatable' do
     let(:otp_secret) { '2z6hxkdwi3uvrnpn' }
 
     before :each do
-      Timecop.freeze(Time.current)
+      allow(Time).to receive(:now).and_return(Time.current)
       subject.otp_secret = otp_secret
-    end
-
-    after :each do
-      Timecop.return
     end
 
     context 'with a stored consumed_timestep' do
@@ -116,7 +112,7 @@ RSpec.shared_examples 'two_factor_authenticatable' do
 
     context 'after the otp interval' do
       before do
-        Timecop.travel(subject.otp.interval.seconds.from_now)
+        allow(Time).to receive(:now).and_return(subject.otp.interval.seconds.from_now)
       end
 
       # This currently fails!
